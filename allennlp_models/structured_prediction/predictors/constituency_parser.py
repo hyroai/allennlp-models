@@ -85,21 +85,28 @@ class ConstituencyParserPredictor(Predictor):
         """
         return self.predict_json({"sentence": sentence})
 
-    def _json_to_instance(self, json_dict: JsonDict) -> Instance:
+    def _json_to_instance(self, json_dict: JsonDict) -> Tuple[Instance, Tuple[str, ...]]:
         """
         Expects JSON that looks like `{"sentence": "..."}`.
         """
         spacy_tokens = self._tokenizer.tokenize(json_dict["sentence"])
+        original_tokens = tuple(token.text_with_ws for token in spacy_tokens)
         sentence_text = [token.text for token in spacy_tokens]
         pos_tags = [token.tag_ for token in spacy_tokens]
-        return self._dataset_reader.text_to_instance(sentence_text, pos_tags)
+        return (
+            self._dataset_reader.text_to_instance(sentence_text, pos_tags),
+            original_tokens,
+        )
 
-    def predict_instance(self, instance: Instance) -> JsonDict:
+    def predict_instance(self, instance_and_original_text: Tuple[Instance, Tuple[str, ...]]) -> JsonDict:
+        instance, original_tokens = instance_and_original_text
         outputs = self._model.forward_on_instance(instance)
 
         # format the NLTK tree as a string on a single line.
         tree = outputs.pop("trees")
-        outputs["hierplane_tree"] = self._build_hierplane_tree(tree, 0, is_root=True)
+        outputs["hierplane_tree"] = self._build_hierplane_tree(
+            tree, original_tokens, [0], is_root=True
+        )
         outputs["trees"] = tree.pformat(margin=1000000)
         return sanitize(outputs)
 
@@ -108,11 +115,19 @@ class ConstituencyParserPredictor(Predictor):
         for output in outputs:
             # format the NLTK tree as a string on a single line.
             tree = output.pop("trees")
-            output["hierplane_tree"] = self._build_hierplane_tree(tree, 0, is_root=True)
+            output["hierplane_tree"] = self._build_hierplane_tree(
+                tree, [0], is_root=True
+            )
             output["trees"] = tree.pformat(margin=1000000)
         return sanitize(outputs)
 
-    def _build_hierplane_tree(self, tree: Tree, index: int, is_root: bool) -> JsonDict:
+    def _build_hierplane_tree(
+        self,
+        tree: Tree,
+        original_tokens: Dict[Text, Text],
+        offset: List[int],
+        is_root: bool,
+    ) -> JsonDict:
         """
         Recursively builds a JSON dictionary from an NLTK `Tree` suitable for
         rendering trees using the `Hierplane library<https://allenai.github.io/hierplane/>`.
@@ -131,16 +146,19 @@ class ConstituencyParserPredictor(Predictor):
 
         A JSON dictionary render-able by Hierplane for the given tree.
         """
+        begin_offset = offset[0]
         children = []
         for child in tree:
             if isinstance(child, Tree):
                 # If the child is a tree, it has children,
                 # as NLTK leaves are just strings.
-                children.append(self._build_hierplane_tree(child, index, is_root=False))
+                children.append(
+                    self._build_hierplane_tree(
+                        child, original_tokens, offset, is_root=False
+                    )
+                )
             else:
-                # We're at a leaf, so add the length of
-                # the word to the character index.
-                index += len(child)
+                offset[0] += 1
 
         label = tree.label()
         span = " ".join(tree.leaves())
