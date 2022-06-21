@@ -161,7 +161,7 @@ class ConstituencyParserPredictor(Predictor):
                 offset[0] += 1
 
         label = tree.label()
-        span = " ".join(tree.leaves())
+        span = "".join(original_tokens[begin_offset : offset[0]])
         hierplane_node = {"word": span, "nodeType": label, "attributes": [label], "link": label}
         if children:
             hierplane_node["children"] = children
