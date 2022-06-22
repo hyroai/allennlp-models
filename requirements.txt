@@ -1,4 +1,4 @@
-allennlp[all] @ git+https://github.com/allenai/allennlp.git@main
+allennlp[all] @ git+https://github.com/hyroai/allennlp.git@main
 
 torch>=1.7.0,<1.12.0
 
