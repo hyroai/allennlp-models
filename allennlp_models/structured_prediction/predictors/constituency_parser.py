@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 
 from nltk import Tree
@@ -124,7 +124,7 @@ class ConstituencyParserPredictor(Predictor):
     def _build_hierplane_tree(
         self,
         tree: Tree,
-        original_tokens: Dict[Text, Text],
+        original_tokens: Dict[str, str],
         offset: List[int],
         is_root: bool,
     ) -> JsonDict:
