@@ -21,8 +21,8 @@ on:
 
 env:
   # NOTE: Need to update `TORCH_VERSION` and `TORCH_VISION_VERSION` for new torch releases.
-  TORCH_VERSION: 1.11.0
-  TORCH_VISION_VERSION: 0.12.0
+  TORCH_VERSION: 1.12.0
+  TORCH_VISION_VERSION: 0.13.0
   # Change this to invalidate the current cache.
   CACHE_PREFIX: v1
   # Disable tokenizers parallelism because this doesn't help, and can cause issues in distributed tests.
@@ -90,7 +90,7 @@ jobs:
   checks:
     name: ${{ matrix.task.name }}
     runs-on: ${{ matrix.task.runs_on }}
-    timeout-minutes: 20
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -155,18 +155,18 @@ jobs:
       id: virtualenv-cache
       with:
         path: .venv
-        key: ${{ env.CACHE_PREFIX }}-${{ env.WEEK_NUMBER }}-${{ runner.os }}-${{ env.RUNNER_ARCH }}-${{ env.PYTHON_VERSION }}-${{ matrix.task.torch_platform }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
+        key: ${{ env.CACHE_PREFIX }}-${{ env.WEEK_NUMBER }}-${{ runner.os }}-${{ env.RUNNER_ARCH }}-${{ env.PYTHON_VERSION }}-${{ matrix.task.torch_platform }}-${{ hashFiles('requirements.txt', 'constraints.txt') }}-${{ hashFiles('dev-requirements.txt') }}
 
     - name: Create virtual environment
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
         test -d .venv || virtualenv -p $(which python) --copies --reset-app-data .venv
-        pip install torch==${{ env.TORCH_VERSION }}+${{ matrix.task.torch_platform }} torchvision==${{ env.TORCH_VISION_VERSION }}+${{matrix.task.torch_platform}} -f https://download.pytorch.org/whl/torch_stable.html
+        pip install torch==${{ env.TORCH_VERSION }} torchvision==${{ env.TORCH_VISION_VERSION }} --extra-index-url https://download.pytorch.org/whl/${{ matrix.task.torch_platform }}
 
     - name: Install requirements
       run: |
         . .venv/bin/activate
-        pip install -r requirements.txt -r dev-requirements.txt
+        pip install -r requirements.txt -r dev-requirements.txt -c constraints.txt
         python -c 'import nltk; nltk.download("omw-1.4")'
 
     - name: Show environment info
@@ -283,18 +283,18 @@ jobs:
       id: virtualenv-cache
       with:
         path: .venv
-        key: ${{ env.CACHE_PREFIX }}-${{ env.WEEK_NUMBER }}-${{ runner.os }}-${{ env.RUNNER_ARCH }}-${{ env.PYTHON_VERSION }}-${{ env.TORCH_PLATFORM }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
+        key: ${{ env.CACHE_PREFIX }}-${{ env.WEEK_NUMBER }}-${{ runner.os }}-${{ env.RUNNER_ARCH }}-${{ env.PYTHON_VERSION }}-${{ env.TORCH_PLATFORM }}-${{ hashFiles('requirements.txt', 'constraints.txt') }}-${{ hashFiles('dev-requirements.txt') }}
 
     - name: Create virtual environment
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
         test -d .venv || virtualenv -p $(which python) --copies --reset-app-data .venv
-        pip install torch==${{ env.TORCH_VERSION }}+${{ env.TORCH_PLATFORM }} torchvision==${{ env.TORCH_VISION_VERSION }}+${{ env.TORCH_PLATFORM }} -f https://download.pytorch.org/whl/torch_stable.html
+        pip install torch==${{ env.TORCH_VERSION }} torchvision==${{ env.TORCH_VISION_VERSION }} -f https://download.pytorch.org/whl/${{ env.TORCH_PLATFORM }}
 
     - name: Install requirements
       run: |
         . .venv/bin/activate
-        pip install -r requirements.txt -r dev-requirements.txt
+        pip install -r requirements.txt -r dev-requirements.txt -c constraints.txt
 
     - name: Show environment info
       run: |
@@ -424,18 +424,18 @@ jobs:
       id: virtualenv-cache
       with:
         path: .venv
-        key: ${{ env.CACHE_PREFIX }}-${{ env.WEEK_NUMBER }}-${{ runner.os }}-${{ env.RUNNER_ARCH }}-${{ env.PYTHON_VERSION }}-${{ env.TORCH_PLATFORM }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
+        key: ${{ env.CACHE_PREFIX }}-${{ env.WEEK_NUMBER }}-${{ runner.os }}-${{ env.RUNNER_ARCH }}-${{ env.PYTHON_VERSION }}-${{ env.TORCH_PLATFORM }}-${{ hashFiles('requirements.txt', 'constraints.txt') }}-${{ hashFiles('dev-requirements.txt') }}
 
     - name: Create virtual environment
       if: steps.virtualenv-cache.outputs.cache-hit != 'true'
       run: |
         test -d .venv || virtualenv -p $(which python) --copies --reset-app-data .venv
-        pip install torch==${{ env.TORCH_VERSION }}+${{ env.TORCH_PLATFORM }} torchvision==${{ env.TORCH_VISION_VERSION }}+${{ env.TORCH_PLATFORM }} -f https://download.pytorch.org/whl/torch_stable.html
+        pip install torch==${{ env.TORCH_VERSION }} torchvision==${{ env.TORCH_VISION_VERSION }} -f https://download.pytorch.org/whl/${{ env.TORCH_PLATFORM }}
 
     - name: Install requirements
       run: |
         . .venv/bin/activate
-        pip install -r requirements.txt -r dev-requirements.txt
+        pip install -r requirements.txt -r dev-requirements.txt -c constraints.txt
 
     - name: Show environment info
       run: |

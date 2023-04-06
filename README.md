@@ -30,6 +30,13 @@
 ❗️ To file an issue, please open a ticket on <a href="https://github.com/allenai/allennlp/issues/new/choose">allenai/allennlp</a> and tag it with "Models". ❗️
 </div>
 
+<br>
+<br>
+
+⚠️ **NOTICE:** The AllenNLP ecosystem is now in maintenance mode. That means we are no longer adding new features or upgrading dependencies. We will still respond to questions and address bugs as they arise up until December 16th, 2022.
+
+<br>
+
 ## In this README
 
 - [About](#about)
@@ -168,9 +175,6 @@ Here is a list of pre-trained models currently available.
 - [`rc-nmn`](https://github.com/allenai/allennlp-models/tree/main/allennlp_models/modelcards/rc-nmn.json) - A neural module network trained on DROP.
 - [`rc-transformer-qa`](https://github.com/allenai/allennlp-models/tree/main/allennlp_models/modelcards/rc-transformer-qa.json) - A reading comprehension model patterned after the proposed model in Devlin et al, with improvements borrowed from the SQuAD model in the transformers project
 - [`roberta-sst`](https://github.com/allenai/allennlp-models/tree/main/allennlp_models/modelcards/roberta-sst.json) - RoBERTa-based binary classifier for Stanford Sentiment Treebank
-- [`semparse-nlvr`](https://github.com/allenai/allennlp-models/tree/main/allennlp_models/modelcards/semparse-nlvr.json) - The model is a semantic parser trained on Cornell NLVR.
-- [`semparse-text-to-sql`](https://github.com/allenai/allennlp-models/tree/main/allennlp_models/modelcards/semparse-text-to-sql.json) - This model is an implementation of an encoder-decoder architecture with LSTMs and constrained type decoding trained on the ATIS dataset.
-- [`semparse-wikitables`](https://github.com/allenai/allennlp-models/tree/main/allennlp_models/modelcards/semparse-wikitables.json) - The model is a semantic parser trained on WikiTableQuestions.
 - [`structured-prediction-biaffine-parser`](https://github.com/allenai/allennlp-models/tree/main/allennlp_models/modelcards/structured-prediction-biaffine-parser.json) - A neural model for dependency parsing using biaffine classifiers on top of a bidirectional LSTM.
 - [`structured-prediction-constituency-parser`](https://github.com/allenai/allennlp-models/tree/main/allennlp_models/modelcards/structured-prediction-constituency-parser.json) - Constituency parser with character-based ELMo embeddings
 - [`structured-prediction-srl-bert`](https://github.com/allenai/allennlp-models/tree/main/allennlp_models/modelcards/structured-prediction-srl-bert.json) - A BERT based model (Shi et al, 2019) with some modifications (no additional parameters apart from a linear classification layer)
