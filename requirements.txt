@@ -1,7 +1,7 @@
 allennlp[all] @ git+https://github.com/hyroai/allennlp.git@main
 
-torch>=1.7.0
-torchvision==0.10.0
+torch==1.10.0
+torchvision==0.11.1
 
 # For structured prediction.
 conllu>=4.4.2
